@@ -1,163 +1,295 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
- 
     <title>Sistem Pencatatan Transaksi Elektronik</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
     <style>
-      :root {
-    --primary-color: #1a73e8;
-    --primary-hover: #1557b0;
-    --success-color: #34a853;
-    --error-color: #ea4335;
-    --warning-color: #fbbc05;
-    --gray-100: #f8f9fa;
-    --gray-200: #e9ecef;
-    --gray-300: #dee2e6;
-    --border-radius: 8px;
-    --shadow: rgba(0, 0, 0, 0.1);
+   :root {
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success-color: #22c55e;
+    --error-color: #ef4444;
+    --text-color: #1f2937;
+    --background-color: #f3f4f6;
+    --card-background: #ffffff;
+    --border-color: #e5e7eb;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    padding: 20px;
-    background-color: #f0f2f5;
-    color: #333;
-    line-height: 1.6;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.5;
+    padding: 2rem;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    gap: 2rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .card {
-    background: white;
-    padding: 25px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 20px var(--shadow);
-    margin-bottom: 25px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    background: var(--card-background);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 30px var(--shadow);
+h1, h2, h3 {
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
 }
 
-h1, h2 {
-    color: var(--primary-color);
-    margin-bottom: 25px;
+/* Summary Cards */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+    color: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+}
+
+.summary-card h3 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.9;
+}
+
+.summary-card .value {
+    font-size: 1.75rem;
     font-weight: 600;
 }
 
+/* Form Styles */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
     font-weight: 500;
-    color: #444;
+    color: var(--text-color);
 }
 
 input, select {
     width: 100%;
-    padding: 10px 12px;
-    border: 2px solid var(--gray-300);
-    border-radius: var(--border-radius);
-    margin-bottom: 10px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    font-size: 14px;
+    padding: 0.75rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background-color: white;
 }
 
 input:focus, select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 5px rgba(26, 115, 232, 0.5);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
+input:hover, select:hover {
+    border-color: var(--primary-hover);
+}
+
+/* Button Styles */
 button {
-    background-color: var(--primary-color);
+    background: var(--primary-color);
     color: white;
-    padding: 12px 24px;
+    padding: 0.75rem 1.5rem;
     border: none;
-    border-radius: var(--border-radius);
-    cursor: pointer;
-    margin-right: 10px;
+    border-radius: 0.5rem;
+    font-size: 1rem;
     font-weight: 500;
-    transition: background-color 0.2s, transform 0.2s;
+    cursor: pointer;
+    transition: all 0.2s;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 0.5rem;
 }
 
 button:hover {
-    background-color: var(--primary-hover);
+    background: var(--primary-hover);
     transform: translateY(-1px);
 }
 
-.filter-section {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
+button:active {
+    transform: translateY(0);
 }
 
+/* Filter Section */
+.filter-section {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow);
+}
+
+.filter-section input,
+.filter-section select {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Table Styles */
 table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
 }
 
 th, td {
-    border: 1px solid var(--gray-300);
-    padding: 14px;
+    padding: 1rem;
     text-align: left;
-    font-size: 14px;
-    transition: background-color 0.2s;
+    border-bottom: 1px solid var(--border-color);
 }
 
 th {
-    background-color: var(--gray-100);
+    background: #f8fafc;
     font-weight: 600;
     position: sticky;
     top: 0;
+    z-index: 10;
 }
 
 th:first-child {
-    border-top-left-radius: var(--border-radius);
+    border-top-left-radius: 0.5rem;
 }
 
 th:last-child {
-    border-top-right-radius: var(--border-radius);
+    border-top-right-radius: 0.5rem;
 }
 
-tr:hover td {
-    background-color: var(--gray-200);
+tr:hover {
+    background: #f8fafc;
 }
 
+/* Alert Styles */
 .alert {
-    padding: 12px 16px;
-    margin-bottom: 20px;
-    border-radius: var(--border-radius);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    animation: slideIn 0.3s ease-out;
     display: flex;
     align-items: center;
-    gap: 10px;
-    animation: slideIn 0.3s ease-out;
+    gap: 0.5rem;
 }
 
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+/* Loading Indicator */
+.loading {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.loading::after {
+    content: "";
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid var(--primary-color);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: var(--card-background);
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 90%;
+    max-width: 800px;
+    margin: 2rem auto;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Deposit Summary Table */
+#depositSummary table {
+    margin-top: 1.5rem;
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+#depositSummary h3 {
+    color: var(--text-color);
+    margin-top: 1.5rem;
+}
+
+#depositSummary ul {
+    list-style: none;
+    margin: 1rem 0;
+}
+
+#depositSummary li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Animation Keyframes */
 @keyframes slideIn {
     from {
-        transform: translateY(-20px);
+        transform: translateY(-1rem);
         opacity: 0;
     }
     to {
@@ -166,71 +298,15 @@ tr:hover td {
     }
 }
 
-.alert-success {
-    background-color: #d4edda;
-    color: var(--success-color);
-    border: 1px solid #c3e6cb;
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    color: var(--error-color);
-    border: 1px solid #f5c6cb;
-}
-
-.summary-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 25px;
-}
-
-.summary-card {
-    background: white;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 8px var(--shadow);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.summary-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px var(--shadow);
-}
-
-.summary-card h3 {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-.summary-card .value {
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--primary-color);
-}
-
-.loading {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.loading::after {
-    content: '';
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--gray-300);
-    border-top-color: var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-2rem);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 @keyframes spin {
@@ -239,81 +315,70 @@ tr:hover td {
     }
 }
 
-/* Responsive Styles */
+/* Responsive Design */
 @media (max-width: 768px) {
-    .filter-section {
-        grid-template-columns: 1fr;
+    body {
+        padding: 1rem;
     }
-
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .filter-section {
+        flex-direction: column;
+    }
+    
+    .filter-section input,
+    .filter-section select,
+    .filter-section button {
+        width: 100%;
+        min-width: 0;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 1rem auto;
+        padding: 1rem;
+    }
+    
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
     .summary-cards {
         grid-template-columns: 1fr;
     }
+}
 
+/* Print Styles */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+    }
+    
     .card {
-        padding: 15px;
+        box-shadow: none;
+        padding: 0;
     }
-
-    h1, h2 {
-        font-size: 1.5em;
-    }
-
+    
+    .filter-section,
     button {
-        width: 100%;
-        margin-bottom: 10px;
+        display: none;
+    }
+    
+    table {
+        border: 1px solid #ddd;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
     }
 }
-  .modal {
-    display: none; /* Tersembunyi secara default */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    border: 1px solid var(--gray-300);
-    padding: 10px;
-    text-align: left;
-}
-
-th {
-    background-color: var(--gray-100);
-} </style>
+    </style>
 </head>
 <body>
     <div class="loading" id="loadingIndicator"></div>
@@ -345,6 +410,7 @@ th {
                         <option value="paket_data">Paket Data</option>
                         <option value="top_up">Top Up E-Wallet</option>
                         <option value="token_listrik">Token Listrik</option>
+                        <option value="tarik_tunai">Tarik Tunai</option>
                     </select>
                 </div>
 
@@ -383,10 +449,12 @@ th {
                     <option value="paket_data">Paket Data</option>
                     <option value="top_up">Top Up E-Wallet</option>
                     <option value="token_listrik">Token Listrik</option>
+                    <option value="tarik_tunai">Tarik Tunai</option>
                 </select>
                 <button onclick="applyFilters()">🔍 Filter</button>
                 <button onclick="resetFilters()">🔄 Reset</button>
                 <button onclick="downloadPDF()">📥 Download PDF</button>
+                <button onclick="exportCSV()">📥 Ekspor CSV</button> <!-- Tombol ekspor CSV -->
             </div>
 
             <table id="transactionTable">
@@ -405,14 +473,32 @@ th {
             </table>
         </div>
     </div>
-<!-- Tambahkan tombol setoran di dalam card -->
-<button id="depositButton">💰 Setoran</button>
-<button id="viewAllDepositsButton">📊 Lihat Semua Data Setoran</button>
 
-<!-- Pop-up untuk setoran -->
-<div id="depositModal" class="modal">
+    <button id="depositButton">💰 Setoran</button>
+    <button id="viewAllDepositsButton">📊 Lihat Semua Data Setoran</button>
+
+    <div id="allDepositsModal" class="modal">
+        <div class="modal-content">
+            
+            <h2>Data Setoran</h2>
+            
+            <label for="startDateDeposits">Dari Tanggal:</label>
+            <input type="date" id="startDateDeposits" />
+            
+            <label for="endDateDeposits">Sampai Tanggal:</label>
+            <input type="date" id="endDateDeposits" />
+            
+            <input type="text" id="searchInputDeposits" placeholder="Cari berdasarkan ID Transaksi atau Nomor/ID" />
+            <button id="filterButton">🔍 Filter</button>
+            <button id="downloadAllDepositsPDF" style="margin-top: 20px;">📥 Unduh Semua Data PDF</button>
+            
+            <div id="allDepositsSummary" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+ <div id="depositModal" class="modal">
     <div class="modal-content">
-        <span class="close" id="closeModal">&times;</span>
+     
         <h2>Setoran</h2>
         <label for="depositDate">Pilih Tanggal:</label>
         <input type="date" id="depositDate" required>
@@ -420,26 +506,6 @@ th {
         
         <div id="depositSummary" style="margin-top: 20px;"></div>
         <button id="saveDepositData" style="margin-top: 20px; display: none;">💾 Simpan Data</button>
-    </div>
-</div>
-
-<!-- Pop-up untuk menampilkan semua data setoran -->
-<div id="allDepositsModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeAllDepositsModal">&times;</span>
-        <h2>Data Setoran</h2>
-        
-        <label for="startDate">Dari Tanggal:</label>
-        <input type="date" id="startDate" />
-        
-        <label for="endDate">Sampai Tanggal:</label>
-        <input type="date" id="endDate" />
-        
-        <input type="text" id="searchInput" placeholder="Cari berdasarkan ID Transaksi atau Nomor/ID" />
-        <button id="filterButton">🔍 Filter</button>
-        <button id="downloadAllDepositsPDF" style="margin-top: 20px;">📥 Unduh Semua Data PDF</button>
-        
-        <div id="allDepositsSummary" style="margin-top: 20px;"></div>
     </div>
 </div>
 
@@ -452,12 +518,12 @@ th {
             pulsa: ['telkomsel', 'xl', 'indosat', 'tri', 'smartfren'],
             paket_data: ['telkomsel', 'xl', 'indosat', 'tri', 'smartfren'],
             top_up: ['gopay', 'ovo', 'dana', 'linkaja'],
-            token_listrik: ['pln']
+            token_listrik: ['pln'],
+            tarik_tunai: ['Dana', 'Bank'] // Tidak ada provider untuk tarik tunai
         };
 
-        
         // Storage key for localStorage
-const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama yang diinginkan
+        const STORAGE_KEY = 'new_transactions';
 
         // Load existing transactions from localStorage
         let transactions = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
@@ -495,56 +561,75 @@ const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama 
         }
 
         // Update summary statistics
-        function updateSummary() {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-            
-            const todayTransactions = transactions.filter(t => new Date(t.date) >= today).length;
-            const todayAmount = transactions
-                .filter(t => new Date(t.date) >= today)
-                .reduce((sum, t) => sum + t.amount, 0);
-            
-            const monthTransactions = transactions.filter(t => new Date(t.date) >= thisMonth).length;
-            
-            document.getElementById('todayTransactions').textContent = todayTransactions;
-            document.getElementById('todayAmount').textContent = formatCurrency(todayAmount);
-            document.getElementById('monthTransactions').textContent = monthTransactions;
-        }
+        // Update summary statistics
+function updateSummary() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    
+    const todayTransactions = transactions.filter(t => new Date(t.date) >= today).length;
+    const todayAmount = transactions
+        .filter(t => new Date(t.date) >= today)
+        .reduce((sum, t) => sum + (t.type === 'tarik_tunai' ? -t.amount : t.amount), 0);
+    
+    const monthTransactions = transactions.filter(t => new Date(t.date) >= thisMonth).length;
+    
+    document.getElementById('todayTransactions').textContent = todayTransactions;
+    document.getElementById('todayAmount').textContent = formatCurrency(todayAmount);
+    document.getElementById('monthTransactions').textContent = monthTransactions;
+}
 
         // Save transaction
-        document.getElementById('transactionForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            document.getElementById('loadingIndicator').style.display = 'flex';
+        // Simpan transaksi
+document.getElementById('transactionForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    document.getElementById('loadingIndicator').style.display = 'flex';
 
-            setTimeout(() => {
-                const transaction = {
-                    id: generateTransactionId(),
-                    date: new Date().toISOString(),
-                    type: document.getElementById('transactionType').value,
-                    phoneNumber: document.getElementById('phoneNumber').value,
-                    amount: parseInt(document.getElementById('amount').value),
-                    provider: document.getElementById('provider').value
-                };
+    setTimeout(() => {
+        const transactionType = document.getElementById('transactionType').value;
+        const amount = parseInt(document.getElementById('amount').value);
 
-                transactions.unshift(transaction);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
-                
-                displayTransactions(transactions);
-                updateSummary();
-                this.reset();
+        // Jika jenis transaksi adalah tarik tunai, kurangi dari total nominal hari ini
+        if (transactionType === 'tarik_tunai') {
+            const todayAmount = transactions
+                .filter(t => new Date(t.date).toLocaleDateString() === new Date().toLocaleDateString())
+                .reduce((sum, t) => sum + t.amount, 0);
 
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-success';
-                alert.innerHTML = '✅ Transaksi berhasil disimpan!';
-                this.insertAdjacentElement('beforebegin', alert);
-                setTimeout(() => alert.remove(), 3000);
-
+            if (amount > todayAmount) {
+                alert('Jumlah tarik tunai melebihi total nominal hari ini!');
                 document.getElementById('loadingIndicator').style.display = 'none';
-            }, 500);
-        });
+                return;
+            }
+        }
+
+        const transaction = {
+            id: generateTransactionId(),
+            date: new Date().toISOString(),
+            type: transactionType,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            amount: amount,
+            provider: document.getElementById('provider').value
+        };
+
+        transactions.unshift(transaction);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        
+        displayTransactions(transactions);
+        updateSummary();
+        this.reset();
+
+        const alertBox = document.createElement('div');
+        alertBox.className = 'alert alert-success';
+        alertBox.innerHTML = '✅ Transaksi berhasil disimpan!';
+        this.insertAdjacentElement('beforebegin', alertBox);
+        setTimeout(() => alertBox.remove(), 3000);
+
+        document.getElementById('loadingIndicator').style.display = 'none';
+    }, 500);
+});
+
 
         // Delete transaction
         function deleteTransaction(id) {
@@ -554,11 +639,11 @@ const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama 
                 displayTransactions(transactions);
                 updateSummary();
                 
-                const alert = document.createElement('div');
-                alert.className = 'alert alert-success';
-                alert.innerHTML = '🗑️ Transaksi berhasil dihapus!';
-                document.querySelector('.container').insertAdjacentElement('afterbegin', alert);
-                setTimeout(() => alert.remove(), 3000);
+                const alertBox = document.createElement('div');
+                alertBox.className = 'alert alert-success';
+                alertBox.innerHTML = '🗑️ Transaksi berhasil dihapus!';
+                document.querySelector('.container').insertAdjacentElement('afterbegin', alertBox);
+                setTimeout(() => alertBox.remove(), 3000);
             }
         }
 
@@ -568,7 +653,6 @@ const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama 
             tbody.innerHTML = '';
 
             transactionsToDisplay.forEach(transaction => {
-                // Add null checks and default values
                 const type = (transaction.type || '').replace('_', ' ');
                 const provider = transaction.provider || '';
                 
@@ -703,6 +787,38 @@ const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama 
             }, 500);
         }
 
+        // Export to CSV
+        function exportCSV() {
+            const rows = [];
+            const visibleRows = document.getElementById('transactionTableBody').getElementsByTagName('tr');
+
+            // Add header
+            rows.push(['ID Transaksi', 'Tanggal', 'Jenis', 'Nomor/ID', 'Provider', 'Nominal']);
+
+            for (let row of visibleRows) {
+                rows.push([
+                    row.cells[0].textContent,
+                    row.cells[1].textContent,
+                    row.cells[2].textContent,
+                    row.cells[3].textContent,
+                    row.cells[4].textContent,
+                    row.cells[5].textContent
+                ]);
+            }
+
+            // Create CSV content
+            const csvContent = rows.map(e => e.join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "laporan-transaksi.csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // Validate phone number input
         document.getElementById('phoneNumber').addEventListener('input', function(e) {
             this.value = this.value.replace(/[^0-9]/g, '');
@@ -714,75 +830,90 @@ const STORAGE_KEY = 'new_transactions'; // Ganti 'new_transactions' dengan nama 
 
         // Auto-update summary every minute
         setInterval(updateSummary, 60000);
-        
-        
-function generateTransactionId() {
-            const randomPart = Math.floor(10 + Math.random() * 90); // Angka acak antara 10 dan 99
-            const now = new Date();
-            const datePart = `${now.getDate().toString().padStart(2, '0')}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getFullYear()}${now.getHours().toString().padStart(2, '0')}`;
-            return `${randomPart}-${datePart}`;
-        }
 
         // Menampilkan pop-up setoran
         document.getElementById('depositButton').onclick = function() {
             document.getElementById('depositModal').style.display = 'block';
         }
 
-        // Menutup pop-up
-        document.getElementById('closeModal').onclick = function() {
-            document.getElementById('depositModal').style.display = 'none';
-        }
+      document.getElementById('depositButton').onclick = function() {
+        document.getElementById('depositModal').style.display = 'block';
+    }
 
-        // Menampilkan data transaksi berdasarkan tanggal
-        document.getElementById('showDepositData').onclick = function() {
-            const selectedDate = document.getElementById('depositDate').value;
-            const filteredTransactions = transactions.filter(t => {
-                const transactionDate = new Date(t.date);
-                return transactionDate.toISOString().slice(0, 10) === selectedDate;
-            });
+    
 
-            let totalAmount = 0;
-            const categoryTotals = {};
-            const dataTable = [];
-
-            filteredTransactions.forEach(t => {
-                totalAmount += t.amount;
-                categoryTotals[t.type] = (categoryTotals[t.type] || 0) + t.amount;
-                dataTable.push({
-                    id: t.id,
-                    date: new Date(t.date).toLocaleString('id-ID'),
-                    type: t.type.replace('_', ' ').toUpperCase(),
-                    phoneNumber: t.phoneNumber,
-                    provider: t.provider.toUpperCase(),
-                    amount: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(t.amount)
-                });
-            });
-
-            let summaryHtml = `<h3>Total: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalAmount)}</h3>`;
-            summaryHtml += '<h4>Total Berdasarkan Kategori:</h4><ul>';
-            for (const [category, amount] of Object.entries(categoryTotals)) {
-                summaryHtml += `<li>${category.toUpperCase()}: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount)}</li>`;
+        // Menutup pop-up ketika klik di luar modal
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('depositModal')) {
+                document.getElementById('depositModal').style.display = 'none';
             }
-            summaryHtml += '</ul>';
-
-            // Tampilkan data transaksi dalam tabel
-            let tableHtml = '<table><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Jenis</th><th>Nomor/ID</th><th>Provider</th><th>Nominal</th></tr></thead><tbody>';
-            dataTable.forEach(row => {
-                tableHtml += `<tr>
-                    <td>${row.id}</td>
-                    <td>${row.date}</td>
-                    <td>${row.type}</td>
-                    <td>${row.phoneNumber}</td>
-                    <td>${row.provider}</td>
-                    <td>${row.amount}</td>
-                </tr>`;
-            });
-            tableHtml += '</tbody></table>';
-
-            document.getElementById('depositSummary').innerHTML = summaryHtml + tableHtml;
-            document.getElementById('saveDepositData').style.display = 'block'; // Tampilkan tombol simpan
+            if (event.target == document.getElementById('allDepositsModal')) {
+                document.getElementById('allDepositsModal').style.display = 'none';
+            }
         }
 
+// Menampilkan data transaksi berdasarkan tanggal
+document.getElementById('showDepositData').onclick = function() {
+    const selectedDate = document.getElementById('depositDate').value; // Ambil tanggal yang dipilih
+    const filteredTransactions = transactions.filter(t => {
+        const transactionDate = new Date(t.date);
+        return transactionDate.toISOString().slice(0, 10) === selectedDate; // Filter transaksi berdasarkan tanggal
+    });
+
+    let totalAmount = 0; // Total setoran
+    let totalWithdrawals = 0; // Total tarik tunai
+    const categoryTotals = {}; // Inisialisasi categoryTotals
+    const dataTable = [];
+
+    filteredTransactions.forEach(t => {
+        if (t.type === 'tarik_tunai') {
+            totalWithdrawals += t.amount; // Hitung total tarik tunai
+        } else {
+            totalAmount += t.amount; // Hitung total nominal untuk setoran
+            // Hitung total berdasarkan kategori
+            categoryTotals[t.type] = (categoryTotals[t.type] || 0) + t.amount;
+        }
+        dataTable.push({
+            id: t.id,
+            date: new Date(t.date).toLocaleString('id-ID'),
+            type: t.type.replace('_', ' ').toUpperCase(),
+            phoneNumber: t.phoneNumber,
+            provider: t.provider.toUpperCase(),
+            amount: new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(t.amount)
+        });
+    });
+
+    // Hitung total keseluruhan dan total bersih
+    const totalOverall = totalAmount + totalWithdrawals; // Total keseluruhan
+    const netTotal = totalAmount - totalWithdrawals; // Total bersih
+
+    let summaryHtml = `<h3>Total Setoran: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalAmount)}</h3>`;
+    summaryHtml += `<h3>Total Tarik Tunai: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalWithdrawals)}</h3>`;
+    summaryHtml += `<h3>Total Keseluruhan: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(totalOverall)}</h3>`;
+    summaryHtml += `<h3>Total Bersih: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(netTotal)}</h3>`;
+    summaryHtml += '<h4>Total Berdasarkan Kategori:</h4><ul>';
+    for (const [category, amount] of Object.entries(categoryTotals)) {
+        summaryHtml += `<li>${category.toUpperCase()}: ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount)}</li>`;
+    }
+    summaryHtml += '</ul>';
+
+    // Tampilkan data transaksi dalam tabel
+    let tableHtml = '<table><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Jenis</th><th>Nomor/ID</th><th>Provider</th><th>Nominal</th></tr></thead><tbody>';
+    dataTable.forEach(row => {
+        tableHtml += `<tr>
+            <td>${row.id}</td>
+            <td>${row.date}</td>
+            <td>${row.type}</td>
+            <td>${row.phoneNumber}</td>
+            <td>${row.provider}</td>
+            <td>${row.amount}</td>
+        </tr>`;
+    });
+    tableHtml += '</tbody></table>';
+
+    document.getElementById('depositSummary').innerHTML = summaryHtml + tableHtml; // Tampilkan ringkasan dan tabel
+    document.getElementById('saveDepositData').style.display = 'block'; // Tampilkan tombol simpan
+}
         // Simpan data transaksi
         document.getElementById('saveDepositData').onclick = function() {
             const selectedDate = document.getElementById('depositDate').value;
@@ -813,157 +944,132 @@ function generateTransactionId() {
             alert('Data transaksi untuk tanggal ' + selectedDate + ' telah disimpan!');
         }
 
-        // Menutup pop-up ketika klik di luar modal
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('depositModal')) {
-                document.getElementById('depositModal').style.display = 'none';
-            }
+        // Menampilkan pop-up untuk melihat semua data setoran
+        document.getElementById('viewAllDepositsButton').onclick = function() {
+            document.getElementById('allDepositsModal').style.display = 'block';
+            displayAllDeposits(); // Tampilkan semua data setoran saat pop-up dibuka
         }
 
+        // Menampilkan semua data setoran
+        function displayAllDeposits() {
+            const deposits = Object.keys(localStorage)
+                .filter(key => key.startsWith('saved_deposit_'))
+                .map(key => JSON.parse(localStorage.getItem(key)))
+                .flat();
 
+            renderDeposits(deposits);
+        }
 
+        // Render data setoran ke dalam tabel
+        function renderDeposits(deposits) {
+            let totalAmount = 0;
+            const dataTable = [];
 
-   // Menampilkan pop-up untuk melihat semua data setoran
-document.getElementById('viewAllDepositsButton').onclick = function() {
-    document.getElementById('allDepositsModal').style.display = 'block';
-    displayAllDeposits(); // Tampilkan semua data setoran saat pop-up dibuka
-}
+            deposits.forEach(t => {
+                totalAmount += t.amount;
+                dataTable.push({
+                    id: t.id,
+                    date: formatDate(t.date),
+                    type: t.type.replace('_', ' ').toUpperCase(),
+                    phoneNumber: t.phoneNumber,
+                    provider: t.provider.toUpperCase(),
+                    amount: formatCurrency(t.amount)
+                });
+            });
 
-// Menutup pop-up
-document.getElementById('closeAllDepositsModal').onclick = function() {
-    document.getElementById('allDepositsModal').style.display = 'none';
-}
+            // Tampilkan data transaksi dalam tabel
+            let tableHtml = '<table><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Jenis</th><th>Nomor/ID</th><th>Provider</th><th >Nominal</th></tr></thead><tbody>';
+            dataTable.forEach(row => {
+                tableHtml += `<tr>
+                    <td>${row.id}</td>
+                    <td>${row.date}</td>
+                    <td>${row.type}</td>
+                    <td>${row.phoneNumber}</td>
+                    <td>${row.provider}</td>
+                    <td>${row.amount}</td>
+                </tr>`;
+            });
+            tableHtml += '</tbody></table>';
 
-// Menampilkan semua data setoran
-function displayAllDeposits() {
-    const deposits = Object.keys(localStorage)
-        .filter(key => key.startsWith('saved_deposit_'))
-        .map(key => JSON.parse(localStorage.getItem(key)))
-        .flat();
+            document.getElementById('allDepositsSummary').innerHTML = `<h3>Total: ${formatCurrency(totalAmount)}</h3>` + tableHtml;
+        }
 
-    renderDeposits(deposits);
-}
+        // Pencarian dan filter data setoran
+        document.getElementById('filterButton').onclick = function() {
+            const startDate = document.getElementById('startDateDeposits').value;
+            const endDate = document.getElementById('endDateDeposits').value;
+            const searchTerm = document.getElementById('searchInputDeposits').value.toLowerCase();
 
-// Render data setoran ke dalam tabel
-function renderDeposits(deposits) {
-    let totalAmount = 0;
-    const dataTable = [];
+            const deposits = Object.keys(localStorage)
+                .filter(key => key.startsWith('saved_deposit_'))
+                .map(key => JSON.parse(localStorage.getItem(key)))
+                .flat();
 
-    deposits.forEach(t => {
-        totalAmount += t.amount;
-        dataTable.push({
-            id: t.id,
-            date: formatDate(t.date),
-            type: t.type.replace('_', ' ').toUpperCase(),
-            phoneNumber: t.phoneNumber,
-            provider: t.provider.toUpperCase(),
-            amount: formatCurrency(t.amount)
-        });
-    });
+            const filteredDeposits = deposits.filter(t => {
+                const transactionDate = new Date(t.date);
+                const isWithinDateRange = (!startDate || transactionDate >= new Date(startDate)) && 
+                                          (!endDate || transactionDate <= new Date(endDate));
+                const matchesSearchTerm = t.id.toLowerCase().includes(searchTerm) || 
+                                           t.phoneNumber.includes(searchTerm);
+                return isWithinDateRange && matchesSearchTerm;
+            });
 
-    // Tampilkan data transaksi dalam tabel
-    let tableHtml = '<table><thead><tr><th>ID Transaksi</th><th>Tanggal</th><th>Jenis</th><th>Nomor/ID</th><th>Provider</th><th>Nominal</th></tr></thead><tbody>';
-    dataTable.forEach(row => {
-        tableHtml += `<tr>
-            <td>${row.id}</td>
-            <td>${row.date}</td>
-            <td>${row.type}</td>
-            <td>${row.phoneNumber}</td>
-            <td>${row.provider}</td>
-            <td>${row.amount}</td>
-        </tr>`;
-    });
-    tableHtml += '</tbody></table>';
+            renderDeposits(filteredDeposits);
+        }
 
-    document.getElementById('allDepositsSummary').innerHTML = `<h3>Total: ${formatCurrency(totalAmount)}</h3>` + tableHtml;
-}
+        // Unduh semua data setoran yang difilter sebagai PDF
+        document.getElementById('downloadAllDepositsPDF').onclick = function() {
+            const startDate = document.getElementById('startDateDeposits').value;
+            const endDate = document.getElementById('endDateDeposits').value;
+            const searchTerm = document.getElementById('searchInputDeposits').value.toLowerCase();
 
-// Pencarian dan filter data setoran
-document.getElementById('filterButton').onclick = function() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const deposits = Object.keys(localStorage)
+                .filter(key => key.startsWith('saved_deposit_'))
+                .map(key => JSON.parse(localStorage.getItem(key)))
+                .flat();
 
-    const deposits = Object.keys(localStorage)
-        .filter(key => key.startsWith('saved_deposit_'))
-        .map(key => JSON.parse(localStorage.getItem(key)))
-        .flat();
+            const filteredDeposits = deposits.filter(t => {
+                const transactionDate = new Date(t.date);
+                const isWithinDateRange = (!startDate || transactionDate >= new Date(startDate)) && 
+                                          (!endDate || transactionDate <= new Date(endDate));
+                const matchesSearchTerm = t.id.toLowerCase().includes(searchTerm) || 
+                                           t.phoneNumber.includes(searchTerm);
+                return isWithinDateRange && matchesSearchTerm;
+            });
 
-    const filteredDeposits = deposits.filter(t => {
-        const transactionDate = new Date(t.date);
-        const isWithinDateRange = (!startDate || transactionDate >= new Date(startDate)) && 
-                                  (!endDate || transactionDate <= new Date(endDate));
-        const matchesSearchTerm = t.id.toLowerCase().includes(searchTerm) || 
-                                   t.phoneNumber.includes(searchTerm);
-        return isWithinDateRange && matchesSearchTerm;
-    });
+            const doc = new jsPDF();
+            doc.setFontSize(16);
+            doc.text('Laporan Setoran', 14, 15);
+            doc.setFontSize(10);
+            doc.text(`Dicetak pada: ${formatDate(new Date())}`, 14, 22);
 
-    renderDeposits(filteredDeposits);
-}
+            let totalAmount = 0;
+            const dataTable = [];
 
-// Unduh semua data setoran yang difilter sebagai PDF
-document.getElementById('downloadAllDepositsPDF').onclick = function() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredDeposits.forEach(t => {
+                totalAmount += t.amount;
+                dataTable.push([
+                    t.id,
+                    formatDate(t.date),
+                    t.type.replace('_', ' ').toUpperCase(),
+                    t.phoneNumber,
+                    t.provider.toUpperCase(),
+                    formatCurrency(t.amount)
+                ]);
+            });
 
-    const deposits = Object.keys(localStorage)
-        .filter(key => key.startsWith('saved_deposit_'))
-        .map(key => JSON.parse(localStorage.getItem(key)))
-        .flat();
+            doc.autoTable({
+                head: [['ID Transaksi', 'Tanggal', 'Jenis', 'Nomor/ID', 'Provider', 'Nominal']],
+                body: dataTable,
+                startY: 35,
+                styles: { fontSize: 8 },
+                headStyles: { fillColor: [26, 115, 232] }
+            });
 
-    const filteredDeposits = deposits.filter(t => {
-        const transactionDate = new Date(t.date);
-        const isWithinDateRange = (!startDate || transactionDate >= new Date(startDate)) && 
-                                  (!endDate || transactionDate <= new Date(endDate));
-        const matchesSearchTerm = t.id.toLowerCase().includes(searchTerm) || 
-                                   t.phoneNumber.includes(searchTerm);
-        return isWithinDateRange && matchesSearchTerm;
-    });
-
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Laporan Setoran', 14, 15);
-    
-    let totalAmount = 0;
-    const dataTable = [];
-
-    filteredDeposits.forEach(t => {
-        totalAmount += t.amount;
-        dataTable.push([
-            t.id,
-            formatDate(t.date),
-            t.type.replace('_', ' ').toUpperCase(),
-            t.phoneNumber,
-            t.provider.toUpperCase(),
-            formatCurrency(t.amount)
-        ]);
-    });
-
-    // Create table
-    doc.autoTable({
-        head: [['ID Transaksi', 'Tanggal', 'Jenis', 'Nomor/ID', 'Provider', 'Nominal']],
-        body: dataTable,
-        startY: 35,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [26, 115, 232] }
-    });
-
-    // Add total amount
-    const finalY = doc.lastAutoTable.finalY || 35;
-    doc.text(`Total: ${formatCurrency(totalAmount)}`, 14, finalY + 10);
-
-    // Download PDF dengan nama file berdasarkan rentang tanggal
-    const fileName = `laporan_setoran_${startDate}_sampai_${endDate}.pdf`;
-    doc.save(fileName);
-}
-
-// Menutup pop-up ketika klik di luar modal
-window.onclick = function(event) {
-    if (event.target == document.getElementById('allDepositsModal')) {
-        document.getElementById('allDepositsModal').style.display = 'none';
-    }
-}     
+            const finalY = doc.lastAutoTable.finalY || 35;
+            doc.text(`Total Setoran: ${formatCurrency(totalAmount)}`, 14, finalY + 10);
+            doc.save('laporan-setoran.pdf');
+        }
     </script>
 </body>
 </html>
